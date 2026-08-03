@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "855980298776",
+    "project_id": "nganbi-app",
+    "storage_bucket": "nganbi-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855980298776:android:f460d34012c1a2af29296d",
+        "android_client_info": {
+          "package_name": "com.forcen.nganbi_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaoY1O19eQAVzkqCEIHfRoBZ8prwDnq2k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
