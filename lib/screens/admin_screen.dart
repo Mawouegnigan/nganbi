@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/etablissement.dart';
 import '../theme/app_colors.dart';
 import '../widgets/badge_disponibilite.dart';
+import 'liste_avis_recus.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -10,7 +11,7 @@ class AdminScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: context.fondEcran,
         appBar: AppBar(
@@ -24,6 +25,7 @@ class AdminScreen extends StatelessWidget {
             tabs: const [
               Tab(text: 'Centres hospitaliers'),
               Tab(text: 'Pharmacies'),
+              Tab(text: 'Avis'),
             ],
           ),
         ),
@@ -31,6 +33,7 @@ class AdminScreen extends StatelessWidget {
           children: [
             _ListeAdminHopitaux(),
             _ListeAdminPharmacies(),
+            const ListeAvisRecus(),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'theme/app_colors.dart';
 import 'models/etablissement.dart';
+import 'services/localisation_service.dart';
 import 'screens/accueil_screen.dart';
 import 'screens/recherche_screen.dart';
 import 'screens/favoris_screen.dart';
@@ -33,23 +34,30 @@ class _NganBiAppState extends State<NganBiApp> {
   User? _utilisateur;
   bool _estAdmin = false;
 
-  // Position par défaut : centre de Cotonou. À remplacer par geolocator
-  // (position réelle de l'utilisateur, avec demande de permission).
-  static const double _latitudeParDefaut = 6.3654;
-  static const double _longitudeParDefaut = 2.4183;
+  double _latitudeUtilisateur = LocalisationService.latitudeParDefaut;
+  double _longitudeUtilisateur = LocalisationService.longitudeParDefaut;
 
   @override
   void initState() {
     super.initState();
     _chargerPreferences();
+    _chargerPosition();
     FirebaseAuth.instance.authStateChanges().listen(_gererChangementAuth);
+  }
+
+  Future<void> _chargerPosition() async {
+    final (latitude, longitude) = await LocalisationService.obtenirPosition();
+    if (mounted) {
+      setState(() {
+        _latitudeUtilisateur = latitude;
+        _longitudeUtilisateur = longitude;
+      });
+    }
   }
 
   Future<void> _gererChangementAuth(User? utilisateur) async {
     bool estAdmin = false;
     if (utilisateur != null) {
-      // forceRefresh: true pour être sûr de lire le claim juste après
-      // l'exécution du script definir_admin.js.
       final resultat = await utilisateur.getIdTokenResult(true);
       estAdmin = resultat.claims?['admin'] == true;
     }
@@ -88,7 +96,7 @@ class _NganBiAppState extends State<NganBiApp> {
   }
 
   void _ouvrirFiche(BuildContext context, Etablissement etablissement) {
-    final distance = etablissement.distanceDepuis(_latitudeParDefaut, _longitudeParDefaut);
+    final distance = etablissement.distanceDepuis(_latitudeUtilisateur, _longitudeUtilisateur);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -125,8 +133,8 @@ class _NganBiAppState extends State<NganBiApp> {
             ),
             RechercheScreen(
               key: ValueKey(_filtreRechercheInitial),
-              latitudeUtilisateur: _latitudeParDefaut,
-              longitudeUtilisateur: _longitudeParDefaut,
+              latitudeUtilisateur: _latitudeUtilisateur,
+              longitudeUtilisateur: _longitudeUtilisateur,
               idsFavoris: _idsFavoris,
               onToggleFavori: _basculerFavori,
               onOuvrirFiche: (etablissement) => _ouvrirFiche(context, etablissement),
@@ -134,8 +142,8 @@ class _NganBiAppState extends State<NganBiApp> {
             ),
             FavorisScreen(
               idsFavoris: _idsFavoris,
-              latitudeUtilisateur: _latitudeParDefaut,
-              longitudeUtilisateur: _longitudeParDefaut,
+              latitudeUtilisateur: _latitudeUtilisateur,
+              longitudeUtilisateur: _longitudeUtilisateur,
               onToggleFavori: _basculerFavori,
               onOuvrirFiche: (etablissement) => _ouvrirFiche(context, etablissement),
             ),
